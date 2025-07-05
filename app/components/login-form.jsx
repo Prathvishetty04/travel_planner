@@ -120,14 +120,14 @@ export default function LoginForm({ onLogin, onAdminLogin }) {
       className="min-h-screen flex items-center justify-center px-4 py-10 bg-cover bg-center"
       style={{
         backgroundImage:
-          'url("https://freedesignfile.com/upload/2014/08/Travel-summer-beach-background-set-vector-01.jpg")',
+          "url('login.jpg')",
       }}
     >
-      <div className="w-full max-w-md space-y-6 bg-white/80 backdrop-blur p-6 rounded-xl shadow-xl">
+      <div className="w-full max-w-md space-y-6 bg-white backdrop-blur p-6 rounded-xl shadow-xl">
         <div className="text-center space-y-3">
           <div className="flex justify-center">
            <img
-  src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Blue_plane_icon.svg/512px-Blue_plane_icon.svg.png"
+  src="logo.jpg"
   alt="Logo"
   className="h-16 w-16"
 />
@@ -245,13 +245,13 @@ export default function LoginForm({ onLogin, onAdminLogin }) {
                   : "Already have an account? Sign in"}
               </Button>
               <br />
-              <Button
+              {/* <Button
                 variant="link"
                 onClick={onAdminLogin}
                 className="text-xs text-red-600"
               >
                 Admin Login
-              </Button>
+              </Button> */}
             </div>
           </CardContent>
         </Card>

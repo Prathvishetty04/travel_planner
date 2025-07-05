@@ -15,9 +15,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../components/ui/dialog"
-import { Calendar, MapPin, Plus, DollarSign, Landmark } from "lucide-react"
+import { Calendar, MapPin, Plus, DollarSign, Trash } from "lucide-react"
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = "http://localhost:8080"
 
 export default function TripPlanner({ user }) {
   const [trips, setTrips] = useState([])
@@ -58,12 +58,43 @@ export default function TripPlanner({ user }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(trip),
       })
+      if (!res.ok) throw new Error("Trip creation failed: " + res.status)
       const created = await res.json()
       setTrips([...trips, created])
       setNewTrip({ title: "", description: "", startDate: "", endDate: "", budget: "" })
       setIsCreateDialogOpen(false)
     } catch (err) {
       console.error("Failed to create trip:", err)
+    }
+  }
+
+  const handleTripClick = async (tripId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/trips/${tripId}`)
+      const fullTrip = await res.json()
+      setSelectedTrip(fullTrip)
+    } catch (err) {
+      console.error("Failed to load full trip details", err)
+    }
+  }
+
+  const handleDeleteTrip = async (tripId) => {
+    if (!confirm("Are you sure you want to delete this trip?")) return
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/trips/${tripId}`, {
+        method: "DELETE",
+      })
+
+      if (!res.ok) throw new Error("Failed to delete trip")
+
+      // Remove from local state
+      setTrips(trips.filter((trip) => trip.id !== tripId))
+      if (selectedTrip?.id === tripId) {
+        setSelectedTrip(null)
+      }
+    } catch (err) {
+      console.error("Error deleting trip:", err)
     }
   }
 
@@ -136,7 +167,11 @@ export default function TripPlanner({ user }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {trips.map((trip) => (
-          <Card key={trip.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setSelectedTrip(trip)}>
+          <Card
+            key={trip.id}
+            className="cursor-pointer hover:shadow-lg transition-shadow relative"
+            onClick={() => handleTripClick(trip.id)}
+          >
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
@@ -159,6 +194,16 @@ export default function TripPlanner({ user }) {
                 <MapPin className="h-4 w-4" />
                 <span>{trip.destinations?.length || 0} destinations</span>
               </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleDeleteTrip(trip.id)
+                }}
+              >
+                <Trash className="h-4 w-4 mr-1" /> Delete
+              </Button>
             </CardContent>
           </Card>
         ))}
@@ -174,21 +219,15 @@ export default function TripPlanner({ user }) {
               <div>
                 <h4 className="font-semibold mb-3">Destinations</h4>
                 {(selectedTrip.destinations || []).map((dest) => (
-                  <div key={dest.id} className="flex justify-between p-2 border rounded items-center">
-                    <div className="flex items-center space-x-2">
-                      <Landmark className="h-4 w-4 text-blue-500" />
-                      <div>
-                        <div className="font-medium">{dest.name}</div>
-                        <div className="text-sm text-muted-foreground">{dest.city}, {dest.country}</div>
-                      </div>
-                    </div>
+                  <div key={dest.id} className="flex justify-between p-2 border rounded">
+                    <span>{dest.name}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {dest.city}, {dest.country}
+                    </span>
                   </div>
                 ))}
               </div>
-              <div>
-                <h4 className="font-semibold mb-3">Activities</h4>
-                <p className="text-muted-foreground text-sm">No activities yet.</p>
-              </div>
+             
             </div>
           </CardContent>
         </Card>
