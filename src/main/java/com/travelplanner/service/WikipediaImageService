@@ -1,0 +1,31 @@
+package com.travelplanner.service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Map;
+
+@Service
+public class WikipediaImageService {
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    public String fetchImageUrl(String query) {
+        try {
+            String apiUrl = UriComponentsBuilder
+                    .fromUriString("https://en.wikipedia.org/api/rest_v1/page/summary/" + query.replace(" ", "_"))
+                    .toUriString();
+
+            Map<String, Object> response = restTemplate.getForObject(apiUrl, Map.class);
+            if (response != null && response.containsKey("thumbnail")) {
+                Map<String, String> thumbnail = (Map<String, String>) response.get("thumbnail");
+                return thumbnail.get("source");
+            }
+        } catch (Exception e) {
+            System.err.println("Wikipedia API error: " + e.getMessage());
+        }
+
+        return null;
+    }
+}
