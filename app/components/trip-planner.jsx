@@ -110,10 +110,12 @@ export default function TripPlanner({ user }) {
   }
 
   const handleFindHotels = () => {
-    if (!selectedTrip?.id) return
-    localStorage.setItem("selectedTripId", selectedTrip.id)
-    router.push("/#hotels") // or set active tab if using Tabs component
-  }
+  if (!selectedTrip?.id) return
+  localStorage.setItem("selectedTripId", selectedTrip.id)
+  location.hash = "#hotels" // optional scroll
+  location.reload()         // triggers the tab switch effect
+}
+
 
   return (
     <div className="container mx-auto px-4 py-6 space-y-6">

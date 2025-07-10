@@ -15,7 +15,8 @@ import {
 const API_BASE_URL = "http://localhost:8080"
 const FALLBACK_IMAGE = "deaultHotel.jpg"
 
-export default function HotelRecommendations({ user }) {
+export default function HotelRecommendations({ user,tripId }) {
+
   const [trips, setTrips] = useState([])
   const [selectedTripId, setSelectedTripId] = useState(null)
   const [hotels, setHotels] = useState([])
@@ -31,20 +32,27 @@ export default function HotelRecommendations({ user }) {
     }
   }
 
-  const fetchRecommendedHotels = async () => {
-    if (!selectedTripId) return
-    try {
-      setLoading(true)
-      const res = await fetch(`${API_BASE_URL}/api/hotels/recommendations?tripId=${selectedTripId}`)
-      const data = await res.json()
-      setHotels(Array.isArray(data) ? data : [])
-    } catch (err) {
-      console.error("Error fetching recommended hotels:", err)
-      setHotels([])
-    } finally {
-      setLoading(false)
-    }
+ const fetchRecommendedHotels = async (id = selectedTripId) => {
+  if (!id) return
+  try {
+    setLoading(true)
+    const res = await fetch(`${API_BASE_URL}/api/hotels/recommendations?tripId=${id}`)
+    const data = await res.json()
+    setHotels(data)
+  } catch (err) {
+    console.error("Error fetching recommended hotels:", err)
+    setHotels([])
+  } finally {
+    setLoading(false)
   }
+}
+
+useEffect(() => {
+  if (tripId) {
+    setSelectedTripId(tripId)
+    fetchRecommendedHotels(tripId)
+  }
+}, [tripId])
 
   useEffect(() => {
     fetchTrips()
