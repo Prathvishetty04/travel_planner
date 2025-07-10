@@ -15,7 +15,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../components/ui/dialog"
-import { Calendar, MapPin, Plus, DollarSign, Trash } from "lucide-react"
+import { Calendar, MapPin, Plus, DollarSign, Trash, Hotel } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 const API_BASE_URL = "http://localhost:8080"
 
@@ -30,6 +31,8 @@ export default function TripPlanner({ user }) {
     endDate: "",
     budget: "",
   })
+
+  const router = useRouter()
 
   const fetchTrips = async () => {
     try {
@@ -88,7 +91,6 @@ export default function TripPlanner({ user }) {
 
       if (!res.ok) throw new Error("Failed to delete trip")
 
-      // Remove from local state
       setTrips(trips.filter((trip) => trip.id !== tripId))
       if (selectedTrip?.id === tripId) {
         setSelectedTrip(null)
@@ -105,6 +107,12 @@ export default function TripPlanner({ user }) {
       case "COMPLETED": return "outline"
       default: return "secondary"
     }
+  }
+
+  const handleFindHotels = () => {
+    if (!selectedTrip?.id) return
+    localStorage.setItem("selectedTripId", selectedTrip.id)
+    router.push("/#hotels") // or set active tab if using Tabs component
   }
 
   return (
@@ -227,7 +235,13 @@ export default function TripPlanner({ user }) {
                   </div>
                 ))}
               </div>
-             
+              <div>
+                <h4 className="font-semibold mb-3">Actions</h4>
+                <Button onClick={handleFindHotels} variant="default">
+                  <Hotel className="h-4 w-4 mr-2" />
+                  Find Hotels
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

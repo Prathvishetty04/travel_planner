@@ -8,6 +8,7 @@ import BudgetTracker from "./components/budget-tracker"
 import AdminPanel from "./components/admin-panel"
 import Notifications from "./components/notifications"
 import LoginForm from "./components/login-form"
+import HotelRecommendations from "./components/hotel-recommendations"
 import clsx from "clsx"
 
 export default function TravelPlannerApp() {
@@ -44,7 +45,6 @@ export default function TravelPlannerApp() {
               onClick={handleLogout}
               className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border border-white/30 hover:border-white/50"
             >
-              
               Logout
             </button>
           </div>
@@ -57,56 +57,60 @@ export default function TravelPlannerApp() {
       {/* Main Content */}
       <section className="w-7xl mx-auto px-4 py-4 space-y-6">
         <div className="bg-[#eff1f1] shadow-xl rounded-xl p-6 ml-2 mr-2">
-           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="flex flex-wrap gap-8 bg-black rounded-full">
-          {[
-            { value: "search", label: "SEARCH" },
-            { value: "plan", label: "PLAN" },
-            { value: "budget", label: "BUDGET" },
-            { value: "notifications", label: "NOTIFICATIONS" },
-          ].map((tab) => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              className={clsx(
-                "bg-[#151515] font-bold text-white transition-all pl-4 pr-4 rounded-md text-sm  hover:scale-105 hover:shadow-md hover:bg-[#d2d6d5] hover:text-gray-800",
-                activeTab === tab.value && "bg-white text-green"
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <TabsList className="flex flex-wrap gap-8 bg-black rounded-full">
+              {[
+                { value: "search", label: "SEARCH" },
+                { value: "plan", label: "PLAN" },
+                { value: "budget", label: "BUDGET" },
+                { value: "notifications", label: "NOTIFICATIONS" },
+                { value: "hotels", label: "HOTELS" }, // ✅ New Tab
+              ].map((tab) => (
+                <TabsTrigger
+                  key={tab.value}
+                  value={tab.value}
+                  className={clsx(
+                    "bg-[#151515] font-bold text-white transition-all pl-4 pr-4 rounded-md text-sm hover:scale-105 hover:shadow-md hover:bg-[#d2d6d5] hover:text-gray-800",
+                    activeTab === tab.value && "bg-white text-green"
+                  )}
+                >
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+              {user.role === "ADMIN" && (
+                <TabsTrigger
+                  value="admin"
+                  className={clsx(
+                    "bg-[#151515] font-bold text-white transition-all pl-4 pr-4 rounded-md text-sm hover:scale-105 hover:shadow-md hover:bg-[#d2d6d5] hover:text-gray-800",
+                    activeTab === "admin" && "bg-white text-green"
+                  )}
+                >
+                  ADMIN
+                </TabsTrigger>
               )}
-            >
-              {tab.label}
-            </TabsTrigger>
-          ))}
-          {user.role === "ADMIN" && (
-            <TabsTrigger
-              value="admin"
-              className={clsx(
-                "bg-[#151515] font-bold text-white transition-all pl-4 pr-4 rounded-md text-sm hover:scale-105 hover:shadow-md hover:bg-[#d2d6d5] hover:text-gray-800",
-                activeTab === "admin" && "bg-white text-green"
-              )}
-            >
-              ADMIN
-            </TabsTrigger>
-          )}
-        </TabsList>
+            </TabsList>
 
-        <TabsContent value="search" className="animate-fade-in">
-          <DestinationSearch user={user} />
-        </TabsContent>
-        <TabsContent value="plan" className="animate-fade-in">
-          <TripPlanner user={user} />
-        </TabsContent>
-        <TabsContent value="budget" className="animate-fade-in">
-          <BudgetTracker user={user} />
-        </TabsContent>
-        <TabsContent value="notifications" className="animate-fade-in">
-          <Notifications user={user} />
-        </TabsContent>
-        {user.role === "ADMIN" && (
-          <TabsContent value="admin" className="animate-fade-in">
-            <AdminPanel user={user} />
-          </TabsContent>
-        )}
-      </Tabs>
+            <TabsContent value="search" className="animate-fade-in">
+              <DestinationSearch user={user} />
+            </TabsContent>
+            <TabsContent value="plan" className="animate-fade-in">
+              <TripPlanner user={user} />
+            </TabsContent>
+            <TabsContent value="budget" className="animate-fade-in">
+              <BudgetTracker user={user} />
+            </TabsContent>
+            <TabsContent value="notifications" className="animate-fade-in">
+              <Notifications user={user} />
+            </TabsContent>
+            <TabsContent value="hotels" className="animate-fade-in">
+              <HotelRecommendations user={user} />
+            </TabsContent>
+            {user.role === "ADMIN" && (
+              <TabsContent value="admin" className="animate-fade-in">
+                <AdminPanel user={user} />
+              </TabsContent>
+            )}
+          </Tabs>
         </div>
       </section>
     </main>
