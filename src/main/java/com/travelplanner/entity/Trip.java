@@ -57,6 +57,8 @@ public class Trip {
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TripHotel> tripHotels = new ArrayList<>();
 
     @LastModifiedDate
     @Column(name = "updated_at")
@@ -119,4 +121,8 @@ public class Trip {
     public enum TripStatus {
         PLANNING, ACTIVE, COMPLETED
     }
+    public List<TripHotel> getTripHotels() {
+    return tripHotels;
+}
+
 }

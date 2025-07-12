@@ -31,7 +31,7 @@ public class HotelService {
 
     private final String OPEN_TRIPMAP_KEY = "5ae2e3f221c38a28845f05b6479e5b543bc57757bbe58690c3e64236";
     private final String UNSPLASH_KEY = "TnRwUjj4rJiXqRFekOHnoFhRkYd-M70z1ZZl4K7IpzM";
-    private final String UNSPLASH_FALLBACK = "https://images.unsplash.com/photo-1507679799987-c73779587ccf";
+    private final String UNSPLASH_FALLBACK = "deaultHotel.jpg";
 
     public List<HotelResponse> getRecommendationsByTrip(Long tripId) {
         Trip trip = tripRepository.findById(tripId)

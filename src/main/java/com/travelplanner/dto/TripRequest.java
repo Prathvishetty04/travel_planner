@@ -2,6 +2,7 @@ package com.travelplanner.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 public class TripRequest {
     private Long userId;
@@ -10,9 +11,10 @@ public class TripRequest {
     private LocalDate startDate;
     private LocalDate endDate;
     private BigDecimal budget;
+    private String status;
 
-    // Constructors
-    public TripRequest() {}
+    private List<Long> destinationIds; // Optional
+    private List<Long> hotelIds;       // Optional, for adding hotels during creation or update
 
     // Getters and Setters
     public Long getUserId() { return userId; }
@@ -32,4 +34,13 @@ public class TripRequest {
 
     public BigDecimal getBudget() { return budget; }
     public void setBudget(BigDecimal budget) { this.budget = budget; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public List<Long> getDestinationIds() { return destinationIds; }
+    public void setDestinationIds(List<Long> destinationIds) { this.destinationIds = destinationIds; }
+
+    public List<Long> getHotelIds() { return hotelIds; }
+    public void setHotelIds(List<Long> hotelIds) { this.hotelIds = hotelIds; }
 }

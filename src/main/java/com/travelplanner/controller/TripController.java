@@ -1,24 +1,17 @@
 package com.travelplanner.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.travelplanner.dto.DestinationResponse;
+import com.travelplanner.dto.TripHotelRequest;
+import com.travelplanner.dto.TripHotelResponse;
 import com.travelplanner.dto.TripRequest;
 import com.travelplanner.dto.TripResponse;
 import com.travelplanner.service.TripService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/trips")
@@ -35,7 +28,7 @@ public class TripController {
         return ResponseEntity.ok(trips);
     }
 
-    // Get a single trip by ID
+    // Get a single trip by ID (with destinations & hotels)
     @GetMapping("/{id}")
     public ResponseEntity<TripResponse> getTripById(@PathVariable Long id) {
         TripResponse trip = tripService.getTripById(id);
@@ -63,7 +56,7 @@ public class TripController {
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ Add a destination to a trip
+    // Add a destination to a trip
     @PostMapping("/{tripId}/destinations")
     public ResponseEntity<String> addDestinationToTrip(
             @PathVariable Long tripId,
@@ -73,10 +66,26 @@ public class TripController {
         return ResponseEntity.ok("Destination added to trip");
     }
 
-    // ✅ Get all destinations for a trip
+    // Get all destinations for a trip
     @GetMapping("/{tripId}/destinations")
     public ResponseEntity<List<DestinationResponse>> getTripDestinations(@PathVariable Long tripId) {
         List<DestinationResponse> destinations = tripService.getDestinationsForTrip(tripId);
         return ResponseEntity.ok(destinations);
+    }
+
+    // ✅ Add a hotel to a trip
+    @PostMapping("/{tripId}/hotels")
+    public ResponseEntity<String> addHotelToTrip(
+            @PathVariable Long tripId,
+            @RequestBody TripHotelRequest request) {
+        tripService.addHotelToTrip(tripId, request);
+        return ResponseEntity.ok("Hotel added to trip");
+    }
+
+    // ✅ Get all hotels for a trip
+    @GetMapping("/{tripId}/hotels")
+    public ResponseEntity<List<TripHotelResponse>> getTripHotels(@PathVariable Long tripId) {
+        List<TripHotelResponse> hotels = tripService.getHotelsForTrip(tripId);
+        return ResponseEntity.ok(hotels);
     }
 }

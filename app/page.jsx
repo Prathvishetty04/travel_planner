@@ -30,6 +30,20 @@ export default function TravelPlannerApp() {
     }
   }, [])
 
+  // Add event listener for switching to hotels tab
+  useEffect(() => {
+    const handleSwitchToHotels = (event) => {
+      const { tripId } = event.detail
+      setActiveTab("hotels")
+      setInitialTripId(tripId)
+      // Store the tripId in localStorage so HotelRecommendations can pick it up
+      localStorage.setItem("selectedTripId", tripId)
+    }
+
+    window.addEventListener('switchToHotels', handleSwitchToHotels)
+    return () => window.removeEventListener('switchToHotels', handleSwitchToHotels)
+  }, [])
+
   const handleLogin = (loggedInUser) => {
     setUser(loggedInUser)
     localStorage.setItem("user", JSON.stringify(loggedInUser))

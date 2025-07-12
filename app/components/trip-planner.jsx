@@ -16,7 +16,6 @@ import {
   DialogTrigger,
 } from "../components/ui/dialog"
 import { Calendar, MapPin, Plus, DollarSign, Trash, Hotel } from "lucide-react"
-import { useRouter } from "next/navigation"
 
 const API_BASE_URL = "http://localhost:8080"
 
@@ -32,12 +31,12 @@ export default function TripPlanner({ user }) {
     budget: "",
   })
 
-  const router = useRouter()
-
   const fetchTrips = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/trips/user/${user.id}`)
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
       const data = await res.json()
+      console.log("Fetched trips:", data) // Debug log
       setTrips(data)
     } catch (err) {
       console.error("Failed to fetch trips:", err)
@@ -45,8 +44,10 @@ export default function TripPlanner({ user }) {
   }
 
   useEffect(() => {
-    fetchTrips()
-  }, [])
+    if (user?.id) {
+      fetchTrips()
+    }
+  }, [user])
 
   const handleCreateTrip = async () => {
     const trip = {
@@ -73,11 +74,19 @@ export default function TripPlanner({ user }) {
 
   const handleTripClick = async (tripId) => {
     try {
+      console.log("Fetching trip details for ID:", tripId) // Debug log
       const res = await fetch(`${API_BASE_URL}/api/trips/${tripId}`)
+      if (!res.ok) {
+        console.error(`Backend error: ${res.status} ${res.statusText}`)
+        alert(`Failed to load trip details. Backend error: ${res.status}`)
+        return
+      }
       const fullTrip = await res.json()
+      console.log("Fetched trip details:", fullTrip) // Debug log
       setSelectedTrip(fullTrip)
     } catch (err) {
       console.error("Failed to load full trip details", err)
+      alert("Failed to load trip details. Please check your backend server.")
     }
   }
 
@@ -110,12 +119,13 @@ export default function TripPlanner({ user }) {
   }
 
   const handleFindHotels = () => {
-  if (!selectedTrip?.id) return
-  localStorage.setItem("selectedTripId", selectedTrip.id)
-  location.hash = "#hotels" // optional scroll
-  location.reload()         // triggers the tab switch effect
-}
-
+    if (!selectedTrip?.id) return
+    // Use a more reliable method for navigation
+    const event = new CustomEvent('switchToHotels', { 
+      detail: { tripId: selectedTrip.id } 
+    })
+    window.dispatchEvent(event)
+  }
 
   return (
     <div className="container mx-auto px-4 py-6 space-y-6">
@@ -134,17 +144,21 @@ export default function TripPlanner({ user }) {
               <DialogDescription>Plan your next adventure</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <Label>Trip Title</Label>
-              <Input
-                value={newTrip.title}
-                onChange={(e) => setNewTrip({ ...newTrip, title: e.target.value })}
-                placeholder="My Trip"
-              />
-              <Label>Description</Label>
-              <Textarea
-                value={newTrip.description}
-                onChange={(e) => setNewTrip({ ...newTrip, description: e.target.value })}
-              />
+              <div>
+                <Label>Trip Title</Label>
+                <Input
+                  value={newTrip.title}
+                  onChange={(e) => setNewTrip({ ...newTrip, title: e.target.value })}
+                  placeholder="My Trip"
+                />
+              </div>
+              <div>
+                <Label>Description</Label>
+                <Textarea
+                  value={newTrip.description}
+                  onChange={(e) => setNewTrip({ ...newTrip, description: e.target.value })}
+                />
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Start Date</Label>
@@ -163,12 +177,14 @@ export default function TripPlanner({ user }) {
                   />
                 </div>
               </div>
-              <Label>Budget ($)</Label>
-              <Input
-                type="number"
-                value={newTrip.budget}
-                onChange={(e) => setNewTrip({ ...newTrip, budget: e.target.value })}
-              />
+              <div>
+                <Label>Budget ($)</Label>
+                <Input
+                  type="number"
+                  value={newTrip.budget}
+                  onChange={(e) => setNewTrip({ ...newTrip, budget: e.target.value })}
+                />
+              </div>
               <Button onClick={handleCreateTrip} className="w-full">Create Trip</Button>
             </div>
           </DialogContent>
@@ -228,22 +244,48 @@ export default function TripPlanner({ user }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div>
                 <h4 className="font-semibold mb-3">Destinations</h4>
-                {(selectedTrip.destinations || []).map((dest) => (
-                  <div key={dest.id} className="flex justify-between p-2 border rounded">
-                    <span>{dest.name}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {dest.city}, {dest.country}
-                    </span>
+                {selectedTrip.destinations && selectedTrip.destinations.length > 0 ? (
+                  <div className="space-y-2">
+                    {selectedTrip.destinations.map((dest, index) => (
+                      <div key={dest.id || index} className="flex justify-between p-2 border rounded">
+                        <span>{dest.name}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {dest.city}, {dest.country}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                ) : (
+                  <p className="text-muted-foreground">No destinations added yet.</p>
+                )}
               </div>
+              
               <div>
-                <h4 className="font-semibold mb-3">Actions</h4>
-                <Button onClick={handleFindHotels} variant="default">
-                  <Hotel className="h-4 w-4 mr-2" />
-                  Find Hotels
-                </Button>
+                <h4 className="font-semibold mb-3">Hotels</h4>
+                {selectedTrip.hotels && selectedTrip.hotels.length > 0 ? (
+                  <div className="space-y-2">
+                    {selectedTrip.hotels.map((hotel, index) => (
+                      <div key={hotel.id || index} className="p-2 border rounded">
+                        <div className="font-medium">{hotel.name}</div>
+                        <div className="text-sm text-muted-foreground">{hotel.address}</div>
+                        {hotel.rating && (
+                          <div className="text-sm">Rating: {hotel.rating}/5</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">No hotels added yet.</p>
+                )}
               </div>
+            </div>
+            
+            <div className="mt-6">
+              <h4 className="font-semibold mb-3">Actions</h4>
+              <Button onClick={handleFindHotels} variant="default">
+                <Hotel className="h-4 w-4 mr-2" />
+                Find Hotels
+              </Button>
             </div>
           </CardContent>
         </Card>
