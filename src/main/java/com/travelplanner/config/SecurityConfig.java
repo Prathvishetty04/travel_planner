@@ -29,6 +29,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/trips").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/trips/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/api/trips/**").permitAll()
+                 .requestMatchers(HttpMethod.GET, "/api/saved-trips/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/saved-trips").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/saved-trips/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/saved-trips/**").permitAll()
+                
                 .requestMatchers("/api/destinations/**").permitAll()
                 .requestMatchers("/api/expenses/**").permitAll()
                 .anyRequest().permitAll() // temp for debugging — lock down later

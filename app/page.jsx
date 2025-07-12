@@ -9,6 +9,7 @@ import AdminPanel from "./components/admin-panel"
 import Notifications from "./components/notifications"
 import LoginForm from "./components/login-form"
 import HotelRecommendations from "./components/hotel-recommendations"
+import SavedTrips from "./components/SavedTrips"
 import clsx from "clsx"
 
 export default function TravelPlannerApp() {
@@ -92,7 +93,7 @@ export default function TravelPlannerApp() {
         <div className="bg-[#eff1f1] shadow-xl rounded-xl p-6 ml-2 mr-2">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="flex flex-wrap gap-8 bg-black rounded-full">
-              {["search", "plan", "budget", "notifications", "hotels"].map((tab) => (
+              {["search", "plan", "saved", "budget", "notifications", "hotels"].map((tab) => (
                 <TabsTrigger
                   key={tab}
                   value={tab}
@@ -101,7 +102,7 @@ export default function TravelPlannerApp() {
                     activeTab === tab && "bg-white text-green"
                   )}
                 >
-                  {tab.toUpperCase()}
+                  {tab === "saved" ? "SAVED TRIPS" : tab.toUpperCase()}
                 </TabsTrigger>
               ))}
               {user.role === "ADMIN" && (
@@ -119,6 +120,7 @@ export default function TravelPlannerApp() {
 
             <TabsContent value="search"><DestinationSearch user={user} /></TabsContent>
             <TabsContent value="plan"><TripPlanner user={user} /></TabsContent>
+            <TabsContent value="saved"><SavedTrips user={user} /></TabsContent>
             <TabsContent value="budget"><BudgetTracker user={user} /></TabsContent>
             <TabsContent value="notifications"><Notifications user={user} /></TabsContent>
             <TabsContent value="hotels"><HotelRecommendations user={user} tripId={initialTripId} /></TabsContent>

@@ -102,7 +102,8 @@ public class DestinationService {
         response.setCountry(destination.getCountry());
         response.setCity(destination.getCity());
         response.setDescription(destination.getDescription());
-        response.setCategory(destination.getCategory().toString());
+        response.setCategory(destination.getCategory()); // ✅ use enum directly
+
         response.setLatitude(destination.getLatitude());
         response.setLongitude(destination.getLongitude());
         response.setImageUrl(destination.getImageUrl());

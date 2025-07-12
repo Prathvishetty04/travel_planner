@@ -104,7 +104,8 @@ public class TripService {
             dr.setCity(d.getCity());
             dr.setCountry(d.getCountry());
             dr.setDescription(d.getDescription());
-            dr.setCategory(d.getCategory().toString());
+            dr.setCategory(d.getCategory());
+
             dr.setLatitude(d.getLatitude());
             dr.setLongitude(d.getLongitude());
             dr.setImageUrl(d.getImageUrl());
@@ -169,7 +170,8 @@ public class TripService {
                     dr.setCity(d.getCity());
                     dr.setCountry(d.getCountry());
                     dr.setDescription(d.getDescription());
-                    dr.setCategory(d.getCategory().toString());
+                   dr.setCategory(d.getCategory());
+
                     dr.setLatitude(d.getLatitude());
                     dr.setLongitude(d.getLongitude());
                     dr.setImageUrl(d.getImageUrl());

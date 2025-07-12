@@ -2,13 +2,15 @@ package com.travelplanner.dto;
 
 import java.math.BigDecimal;
 
+import com.travelplanner.entity.Destination.Category;
+
 public class DestinationResponse {
     private Long id;
     private String name;
     private String country;
     private String city;
     private String description;
-    private String category;
+    private Category category;
     private BigDecimal latitude;
     private BigDecimal longitude;
     private String imageUrl;
@@ -33,8 +35,8 @@ public class DestinationResponse {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
 
     public BigDecimal getLatitude() { return latitude; }
     public void setLatitude(BigDecimal latitude) { this.latitude = latitude; }
